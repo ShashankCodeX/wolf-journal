@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0c0c" />
+  <title>Edgebook — Trading Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <section class="auth-screen" id="authScreen">
+    <div class="auth-card">
+      <a class="brand auth-brand" href="#"><span class="brand-mark"><span></span><span></span><span></span></span><span>edgebook<span class="brand-period">.</span></span></a>
+      <p class="eyebrow">A JOURNAL THAT FOLLOWS YOU</p>
+      <h1>Your trades.<br><span class="heading-serif">Your account.</span></h1>
+      <p class="auth-intro">Create an account or sign in with email to keep your journal and screenshots private and synced across devices.</p>
+      <form id="authForm">
+        <label>Email address<input type="email" id="authEmail" autocomplete="email" placeholder="you@example.com" required></label>
+        <label>Password<input type="password" id="authPassword" autocomplete="current-password" minlength="8" placeholder="At least 8 characters" required></label>
+        <button class="button button-primary auth-submit" id="authSubmit" type="submit">Sign in</button>
+      </form>
+      <p class="auth-switch-line"><span id="authSwitchPrompt">New to Edgebook?</span><button id="authModeToggle" type="button">Create an account</button></p>
+      <div class="auth-message hidden" id="authMessage" role="status"></div>
+      <p class="auth-local-note">Your private journal is linked to your sign-in. Screenshots are stored in your account's private space.</p>
+    </div>
+    <p class="auth-footer">A thoughtful trading process starts with a better record.</p>
+  </section>
+
+  <div class="app-shell hidden" id="appShell">
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="Edgebook home">
+        <span class="brand-mark"><span></span><span></span><span></span></span>
+        <span>edgebook<span class="brand-period">.</span></span>
+      </a>
+
+      <div class="workspace-label">WORKSPACE</div>
+      <nav class="primary-nav" aria-label="Main navigation">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">◫</span>Overview</button>
+        <button class="nav-item" data-view="journal"><span class="nav-icon">▤</span>Trade journal<span class="nav-count" id="navTradeCount">0</span></button>
+        <button class="nav-item" data-view="analytics"><span class="nav-icon">⌁</span>Analytics</button>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+      <div class="workspace-label">YOUR MARKETS</div>
+      <div class="market-watch">
+        <div class="watch-row"><span class="coin-icon gold">Au</span><span class="watch-name">Gold <small>XAUUSD</small></span><span class="watch-state"><i></i> Focus</span></div>
+        <div class="watch-row"><span class="coin-icon bitcoin">₿</span><span class="watch-name">Bitcoin <small>BTCUSD</small></span><span class="watch-state"><i></i> Focus</span></div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="local-note"><span class="lock-icon">▣</span><span><strong>Your journal follows you.</strong><small>Synced to your account on every signed-in device.</small></span></div>
+        <button class="profile-button" data-view="settings"><span class="avatar" id="accountAvatar">T</span><span class="profile-name"><strong id="accountName">Trader</strong><small id="accountEmail">Personal journal</small></span><span class="profile-menu">···</span></button>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="mobile-brand"><span class="brand-mark"><span></span><span></span><span></span></span>edgebook<span class="brand-period">.</span></div>
+        <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong id="crumbCurrent">Overview</strong></div>
+        <div class="topbar-actions"><span class="today-label" id="todayLabel"></span><button class="icon-button" id="exportButton" title="Export your trades" aria-label="Export your trades">⇩</button><button class="button button-primary top-add" id="newTradeTop"><span>＋</span> Log a trade</button></div>
+      </header>
+
+      <div class="page-content" id="view-dashboard">
+        <section class="page-heading">
+          <div><p class="eyebrow">YOUR PROCESS, IN FOCUS</p><h1>Good trading is <span class="heading-serif">intentional.</span></h1><p class="subheading">A clear view of the decisions behind your results.</p></div>
+          <div class="period-switch" role="group" aria-label="Select date range"><button data-period="7">7D</button><button class="selected" data-period="30">30D</button><button data-period="90">90D</button><button data-period="all">All time</button></div>
+        </section>
+
+        <div class="sample-banner hidden" id="sampleBanner"><span class="sample-banner-icon">✳</span><span><strong>Example data is showing.</strong> These fictional trades are here to help you explore the journal. Remove them when you’re ready to start fresh.</span><button id="removeSampleTrades">Remove examples <b>×</b></button></div>
+        <div class="migration-banner hidden" id="localMigrationBanner"><span class="sample-banner-icon">↻</span><span><strong>Found a journal on this device.</strong> Import its <b id="legacyTradeCount">0 trades</b> into this account so they travel with you.</span><button id="importLegacyJournal">Import journal</button><button class="migration-dismiss" id="dismissLegacyImport" aria-label="Dismiss">×</button></div>
+
+        <section class="stat-grid" aria-label="Trading summary">
+          <article class="stat-card"><div class="stat-top"><span>Net P&amp;L</span><span class="stat-icon">↗</span></div><div class="stat-value" id="statPnl">$0.00</div><div class="stat-foot"><span class="delta positive" id="pnlFoot">—</span><span>for selected period</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Win rate</span><span class="stat-icon">◒</span></div><div class="stat-value" id="statWin">0<span class="value-unit">%</span></div><div class="stat-foot"><span class="delta neutral" id="winFoot">0 wins</span><span>of closed trades</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Trades taken</span><span class="stat-icon">↗</span></div><div class="stat-value" id="statTrades">0</div><div class="stat-foot"><span class="delta neutral" id="tradeFoot">0 open</span><span>in this period</span></div></article>
+          <article class="stat-card"><div class="stat-top"><span>Profit factor</span><span class="stat-icon">⌁</span></div><div class="stat-value" id="statPF">—</div><div class="stat-foot"><span class="delta neutral" id="pfFoot">Gross wins ÷ losses</span><span></span></div></article>
+        </section>
+
+        <section class="dashboard-grid">
+          <article class="panel performance-panel">
+            <div class="panel-heading"><div><p class="eyebrow">THE BIG PICTURE</p><h2>Performance</h2></div><div class="chart-legend"><span><i></i> Cumulative P&amp;L</span><span class="chart-total" id="chartTotal">$0.00</span></div></div>
+            <div class="chart-wrap"><div class="chart-y-labels" id="chartYLabels"></div><svg class="performance-chart" id="performanceChart" viewBox="0 0 720 230" preserveAspectRatio="none" role="img" aria-label="Cumulative profit and loss chart"></svg><div class="chart-x-labels" id="chartXLabels"></div></div>
+          </article>
+          <article class="panel focus-panel">
+            <div class="panel-heading"><div><p class="eyebrow">THE NEXT REP</p><h2>Trading focus</h2></div><span class="focus-spark">✳</span></div>
+            <p class="focus-copy">A good journal tracks more than the result. Keep your <strong>process</strong> in the picture.</p>
+            <div class="focus-metric"><div><span class="focus-label">Plan followed</span><strong id="planRate">—</strong></div><div class="focus-ring" id="planRing"><span id="planRingText">—</span></div></div>
+            <div class="focus-rule"></div>
+            <div class="focus-bottom"><span class="focus-dot"></span><span id="focusMessage">Log your first trade to start building consistency.</span></div>
+          </article>
+        </section>
+
+        <section class="lower-grid">
+          <article class="panel recent-panel">
+            <div class="panel-heading"><div><p class="eyebrow">RECENT ACTIVITY</p><h2>Latest trades</h2></div><button class="text-button" data-go="journal">View journal <span>↗</span></button></div>
+            <div class="table-scroll"><table class="trade-table"><thead><tr><th>Instrument</th><th>Direction</th><th>Setup</th><th>Date</th><th>Result</th><th></th></tr></thead><tbody id="recentTrades"></tbody></table></div>
+            <div class="empty-state hidden" id="recentEmpty"><div class="empty-mark">＋</div><strong>Your next trade starts here.</strong><span>Log a trade to start seeing your process take shape.</span><button class="button button-secondary" id="emptyLogButton">Log your first trade</button></div>
+          </article>
+          <article class="panel breakdown-panel">
+            <div class="panel-heading"><div><p class="eyebrow">WHERE YOU TRADE</p><h2>By instrument</h2></div><span class="muted-small">Selected period</span></div>
+            <div class="instrument-list" id="instrumentBreakdown"></div>
+          </article>
+        </section>
+        <footer class="page-footer"><span>Edgebook <span class="brand-period">●</span> A private space to learn from every trade.</span><span>Keep showing up. Keep getting sharper.</span></footer>
+      </div>
+
+      <div class="page-content hidden" id="view-journal">
+        <section class="page-heading compact-heading"><div><p class="eyebrow">THE DETAILS MATTER</p><h1>Your <span class="heading-serif">trade journal.</span></h1><p class="subheading">Review the decisions, not just the outcome.</p></div><button class="button button-primary" id="journalAddButton"><span>＋</span> Log a trade</button></section>
+        <section class="journal-toolbar"><div class="search-box"><span>⌕</span><input id="tradeSearch" type="search" placeholder="Search instrument, setup, notes..." /></div><select id="assetFilter" aria-label="Filter by instrument"><option value="all">All instruments</option><option>XAUUSD</option><option>BTCUSD</option><option>EURUSD</option><option>ETHUSD</option><option>Other</option></select><select id="resultFilter" aria-label="Filter by result"><option value="all">All results</option><option value="win">Winners</option><option value="loss">Losers</option><option value="open">Open trades</option></select><span class="table-count" id="tableCount">0 trades</span></section>
+        <section class="panel journal-panel"><div class="table-scroll"><table class="trade-table journal-table"><thead><tr><th>Trade</th><th>Direction</th><th>Setup</th><th>Entry → Exit</th><th>R multiple</th><th>Plan</th><th>Date</th><th>Result</th><th></th></tr></thead><tbody id="allTrades"></tbody></table></div><div class="journal-empty hidden" id="journalEmpty"><div class="empty-mark">⌕</div><strong>No trades match this view.</strong><span>Try adjusting your filters or log a new trade.</span><button class="button button-secondary" id="journalEmptyButton">Log a trade</button></div></section>
+        <footer class="page-footer"><span>Every trade is a data point. Every review is progress.</span><span id="journalFooterCount">0 entries</span></footer>
+      </div>
+
+      <div class="page-content hidden" id="view-analytics">
+        <section class="page-heading compact-heading"><div><p class="eyebrow">PATTERNS OVER PREDICTIONS</p><h1>Learn from your <span class="heading-serif">numbers.</span></h1><p class="subheading">Find the setups, sessions, and habits worth repeating.</p></div><button class="button button-secondary" id="analyticsExportButton">⇩ Export journal</button></section>
+        <section class="stat-grid analytics-stats"><article class="stat-card"><div class="stat-top"><span>Average winner</span><span class="stat-icon">↗</span></div><div class="stat-value" id="avgWinner">$0</div><div class="stat-foot"><span>Per winning closed trade</span></div></article><article class="stat-card"><div class="stat-top"><span>Average loser</span><span class="stat-icon">↘</span></div><div class="stat-value" id="avgLoser">$0</div><div class="stat-foot"><span>Per losing closed trade</span></div></article><article class="stat-card"><div class="stat-top"><span>Average R</span><span class="stat-icon">R</span></div><div class="stat-value" id="avgR">—</div><div class="stat-foot"><span>Risk-adjusted result</span></div></article><article class="stat-card"><div class="stat-top"><span>Plan adherence</span><span class="stat-icon">✓</span></div><div class="stat-value" id="analyticsPlan">—</div><div class="stat-foot"><span>Trades marked on-plan</span></div></article></section>
+        <section class="analytics-grid"><article class="panel analytics-panel"><div class="panel-heading"><div><p class="eyebrow">EDGE BY MARKET</p><h2>Instrument breakdown</h2></div></div><div id="analyticsInstruments" class="analytics-instruments"></div></article><article class="panel analytics-panel"><div class="panel-heading"><div><p class="eyebrow">EDGE BY SETUP</p><h2>Setups to watch</h2></div></div><div id="setupBreakdown" class="setup-breakdown"></div></article></section>
+        <section class="panel reflection-panel"><div class="panel-heading"><div><p class="eyebrow">THE HUMAN SIDE</p><h2>Reflection check-in</h2></div><span class="reflection-date" id="reflectionCount">—</span></div><div class="reflection-grid"><div class="reflection-card"><span class="reflection-icon">↗</span><strong>Best trade</strong><span id="bestTradeText">Log trades to reveal your standout result.</span></div><div class="reflection-card"><span class="reflection-icon">↘</span><strong>One to review</strong><span id="reviewTradeText">Your biggest loss can be a useful teacher.</span></div><div class="reflection-card"><span class="reflection-icon">◎</span><strong>Process pulse</strong><span id="processPulseText">Mark whether you followed your plan to track this habit.</span></div></div></section>
+        <footer class="page-footer"><span>Performance is a record. Process is the edge.</span><span>Built for reflection, not prediction.</span></footer>
+      </div>
+
+      <div class="page-content hidden" id="view-settings">
+        <section class="page-heading compact-heading"><div><p class="eyebrow">YOUR JOURNAL, YOUR CALL</p><h1>Journal <span class="heading-serif">settings.</span></h1><p class="subheading">Manage your data and make this space yours.</p></div></section>
+        <section class="settings-grid"><article class="panel settings-card"><div class="panel-heading"><div><p class="eyebrow">YOUR DATA</p><h2>Export or restore</h2></div></div><p>All entries live in your account. Export a backup to keep a copy or move your journal to another account.</p><div class="settings-actions"><button class="button button-primary" id="settingsExport">⇩ Download CSV</button><button class="button button-secondary" id="settingsExportJson">⇩ Download JSON</button></div><div class="settings-divider"></div><label class="button button-secondary import-button">↑ Import journal<input id="importFile" type="file" accept=".json,application/json" hidden></label><small class="settings-hint">JSON backups include attached screenshots. CSV exports trade details.</small></article><article class="panel settings-card"><div class="panel-heading"><div><p class="eyebrow">ACCOUNT</p><h2 id="settingsAccountTitle">Signed in</h2></div></div><p id="settingsAccountDescription">Your trades and screenshots are private to your account.</p><button class="button button-danger" id="signOutButton">Sign out</button><div class="settings-divider"></div><div class="privacy-callout"><span>▣</span><div><strong>Account-secured storage</strong><small>Data is kept in your Supabase project with row-level access rules. Screenshots use a private storage bucket.</small></div></div></article></section>
+        <footer class="page-footer"><span>Edgebook <span class="brand-period">●</span> A private space to learn from every trade.</span><span id="settingsTradeCount">0 trades saved</span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop hidden" id="tradeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="trade-modal"><div class="modal-header"><div><p class="eyebrow">CAPTURE THE DETAILS</p><h2 id="modalTitle">Log a trade</h2></div><button class="close-button" id="closeModal" aria-label="Close">×</button></div>
+      <form id="tradeForm">
+        <div class="form-section-label">TRADE DETAILS</div>
+        <div class="form-grid"><label>Instrument<select name="symbol" required><option value="XAUUSD">XAUUSD · Gold</option><option value="BTCUSD">BTCUSD · Bitcoin</option><option value="EURUSD">EURUSD · Euro / US Dollar</option><option value="ETHUSD">ETHUSD · Ethereum</option><option value="Other">Other</option></select></label><label>Direction<div class="segmented-control"><input type="radio" name="side" id="sideLong" value="Long" checked><label for="sideLong">↗ Long</label><input type="radio" name="side" id="sideShort" value="Short"><label for="sideShort">↘ Short</label></div></label></div>
+        <div class="form-grid"><label>Setup<input name="setup" placeholder="e.g. Breakout retest" maxlength="48"></label><label>Date<input name="date" type="date" required></label></div>
+        <div class="form-section-label form-section-spaced">ENTRY &amp; EXIT <span>Price fields are optional</span></div>
+        <div class="form-grid three-cols"><label>Entry price<input name="entry" type="number" step="any" placeholder="0.00"></label><label>Exit price<input name="exit" type="number" step="any" placeholder="0.00"></label><label>Size / units<input name="size" type="number" step="any" min="0" placeholder="0.10"></label></div>
+        <div class="form-section-label form-section-spaced">OUTCOME &amp; PROCESS</div>
+        <div class="form-grid three-cols"><label>Net P&amp;L <span class="field-hint">in USD</span><input name="pnl" type="number" step="any" placeholder="0.00"></label><label>Risk amount <span class="field-hint">in USD</span><input name="risk" type="number" step="any" min="0" placeholder="Optional"></label><label>Trade status<select name="status"><option value="closed">Closed</option><option value="open">Open</option></select></label></div>
+        <div class="form-grid"><label>Followed your plan?<select name="plan"><option value="yes">Yes, stayed with the plan</option><option value="no">No, I deviated</option><option value="na">Not recorded</option></select></label><label>Emotion<input name="emotion" placeholder="e.g. Calm, impatient" maxlength="40"></label></div>
+        <label class="notes-label">Notes &amp; review<textarea name="notes" rows="3" placeholder="What did you notice? What would you repeat or change?" maxlength="1200"></textarea></label>
+        <div class="screenshot-section"><div class="screenshot-label">SCREENSHOTS <span>Add charts, entries, or review notes</span></div><label class="screenshot-upload"><span class="upload-plus">＋</span><span><strong>Add screenshots</strong><small>Choose multiple images · JPG, PNG, or WebP</small></span><input id="screenshotFiles" type="file" accept="image/*" multiple></label><div class="screenshot-gallery" id="screenshotGallery"></div><div class="screenshot-storage-note">Images are resized before secure upload to your account.</div></div>
+        <div class="form-error hidden" id="formError"></div>
+        <div class="modal-actions"><button type="button" class="button button-danger hidden" id="deleteTradeButton">Delete trade</button><span class="modal-action-spacer"></span><button type="button" class="button button-secondary" id="cancelModal">Cancel</button><button type="submit" class="button button-primary" id="saveTradeButton">Save trade <span>↗</span></button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="app.js?v=3"></script>
+</body>
+</html>

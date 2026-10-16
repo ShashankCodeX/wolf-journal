@@ -1,0 +1,20 @@
+.DS_Store
+Thumbs.db
+*.zip
+
+# Local development environments and generated files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.netlify/
+
+# Local credentials and environment configuration
+.env
+.env.*
+!.env.example
+config.local.js
+
+# Editor and OS files
+.idea/
+.vscode/
