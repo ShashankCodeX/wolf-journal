@@ -44,3 +44,7 @@ If Netlify asks for a build command, leave it blank. After deployment, verify th
 - Supabase Auth associates each trade and screenshot with its owner. Row-level security prevents one signed-in account from reading or changing another account's rows.
 - Keep the screenshot bucket private. Do not disable or weaken the RLS and Storage policies.
 - A public website and repository do not make journals public; never add server-side credentials or disable the access policies.
+
+## License
+
+Licensed under the MIT License; see [LICENSE](./LICENSE).
